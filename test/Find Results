@@ -1,0 +1,333 @@
+Searching 1 file for "review"
+
+Unable to open ~/Documents/project/cms/spina-components
+0 matches
+
+Searching 1 file for "review"
+
+Unable to open ~/Documents/project/cms/spina-components
+0 matches
+
+Searching 75 files for "review"
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/app/controllers/spina/admin/reviews_controller.rb:
+    1  module Spina
+    2    module Admin
+    3:     class ReviewsController < AdminController
+    4        before_filter :set_breadcrumb
+    5  
+    .
+    7  
+    8        def show
+    9:         @review = Review.find(params[:id])
+   10        end
+   11  
+   12        def index
+   13:         @reviews = Review.all
+   14:         @average_rating = Review.average('rating') || 0
+   15        end
+   16  
+   17        def new
+   18:         add_breadcrumb "Nieuwe beoordeling", spina.new_admin_review_path
+   19  
+   20:         @review = Review.new
+   21        end
+   22  
+   23        def edit
+   24:         @review = Review.find(params[:id])
+   25:         add_breadcrumb @review.name
+   26        end
+   27  
+   28        def create
+   29:         @review = Review.new(review_params)
+   30  
+   31          add_breadcrumb "Nieuwe beoordeling"
+   32:         if @review.save
+   33:           redirect_to spina.admin_reviews_url, notice: "Beoordeling is aangemaakt."
+   34          else
+   35            render :new
+   ..
+   38  
+   39        def update
+   40:         @review = Review.find(params[:id])
+   41  
+   42:         add_breadcrumb @review.name
+   43  
+   44:         if @review.update_attributes(review_params)
+   45:           redirect_to spina.admin_reviews_url, notice: "Beoordeling van #{@review.name} opgeslagen"
+   46          else
+   47            render :edit
+   ..
+   50  
+   51        def destroy
+   52:         @review = Review.find(params[:id])
+   53:         @review.destroy
+   54:         redirect_to spina.admin_reviews_url, notice: "De beoordeling is verwijderd."
+   55        end
+   56  
+   ..
+   58  
+   59        def set_breadcrumb
+   60:         add_breadcrumb "Beoordelingen", spina.admin_reviews_path
+   61        end
+   62  
+   63:       def review_params
+   64:         params.require(:review).permit(:name, :rating, :created_at, :explanation)
+   65        end
+   66      end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/app/decorators/controllers/spina/pages_controller_decorator.rb:
+    4      private
+    5  
+    6:     def reviews
+    7:       Review.order('created_at DESC')
+    8      end
+    9:     helper_method :reviews
+   10  
+   11:     def reviews_page_path
+   12:       Page.where(view_template: 'reviews').first.try(:materialized_path)
+   13      end
+   14:     helper_method :reviews_page_path
+   15  
+   16      def average_rating
+   17:       Review.average('rating') || 0
+   18      end
+   19      helper_method :average_rating
+   20  
+   21      def rating_count
+   22:       Review.count
+   23      end
+   24      helper_method :rating_count
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/app/models/spina/review.rb:
+    1  module Spina
+    2:   class Review < ActiveRecord::Base
+    3      validates :name, :rating, presence: true
+    4    end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/app/views/spina/admin/reviews/_form.html.haml:
+    1: = form_for [spina, :admin, @review], html: {autocomplete: "off"} do |f|
+    2    - content_for :notification_alert do
+    3:     = error_explanation!(@review)
+    4  
+    5    #page_content.tab-content.active
+    .
+   20              Datum
+   21            %td
+   22:             = f.text_field :created_at, value: (@review.created_at.strftime("%d-%m-%Y") unless @review.new_record?), placeholder: "Datum van beoordeling", class: 'datepicker'
+   23          %tr
+   24            %td
+   ..
+   30      Beoordeling opslaan
+   31  
+   32:   = link_to "Annuleren", spina.admin_reviews_path, class: 'button button-link'
+   33  
+   34:   - unless @review.new_record?
+   35:     .pull-right= link_to "Verwijderen", spina.admin_review_path(@review), method: :delete, confirm: "Weet je zeker dat je de beoordeling van <strong>#{@review.name}</strong> wilt verwijderen?", class: 'button button-link button-danger'
+   36  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/app/views/spina/admin/reviews/index.html.haml:
+    1  .filters
+    2:   = link_to "Nieuwe beoordeling", spina.new_admin_review_path, class: 'button button-primary', data: {icon: 't'}
+    3  
+    4    .pull-right
+    .
+   14  
+   15      %tbody
+   16:       - if @reviews.any?
+   17:         - @reviews.each do |review|
+   18            %tr
+   19              %td.nowrap
+   20:               = review.name
+   21:               %small= time_ago_in_words(review.created_at) + " geleden"
+   22              %td
+   23                .rating
+   24:                 - review.rating.times do 
+   25                    %i{data: {icon: '5'}}
+   26:                 - (5 - review.rating).times do
+   27                    %i.icon-dimmed{data: {icon: '5'}}
+   28:               %p= review.explanation
+   29              %td.nowrap
+   30:               = link_to 'Bewerken', spina.edit_admin_review_path(review), class: 'button button-link', data: {icon: 'q'}
+   31  
+   32        - else
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/bin/rails:
+    3  
+    4  ENGINE_ROOT = File.expand_path('../..', __FILE__)
+    5: ENGINE_PATH = File.expand_path('../../lib/spina/reviews/engine', __FILE__)
+    6  
+    7  # Set up gems listed in the Gemfile.
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/config/routes.rb:
+    1  Spina::Engine.routes.draw do
+    2    namespace :admin do
+    3:     resources :reviews
+    4    end
+    5  end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/Gemfile:
+    1  source "https://rubygems.org"
+    2  
+    3: # Declare your gem's dependencies in reviews.gemspec.
+    4  # Bundler will treat runtime dependencies like base dependencies, and
+    5  # development dependencies will be added by default to the :development group.
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/Gemfile.lock:
+    2    remote: .
+    3    specs:
+    4:     spina-reviews (0.0.3)
+    5        rails (~> 4.0)
+    6  
+    .
+  103  
+  104  DEPENDENCIES
+  105:   spina-reviews!
+  106    sqlite3
+  107  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/generators/spina_reviews/install_generator.rb:
+    3  require 'rails/generators/active_record'
+    4  
+    5: module SpinaReviews
+    6    module Generators
+    7      class InstallGenerator < Rails::Generators::Base
+    .
+   17  
+   18        def copy_migration_file
+   19:         migration_template "create_spina_reviews_table.rb", Rails.root.join("db/migrate/create_spina_reviews_table.rb")
+   20        end
+   21  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/generators/spina_reviews/templates/create_spina_reviews_table.rb:
+    1: class CreateSpinaReviewsTable < ActiveRecord::Migration
+    2    def change
+    3:     create_table :spina_reviews do |t|
+    4        t.string :name
+    5        t.integer :rating, null: false
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/generators/spina_reviews/USAGE:
+    1  Description:
+    2:     Generates the migration file required to create the review model
+    3  
+    4  Example:
+    5:     rails generate spina_reviews:install
+    6  
+    7      This will create:
+    8:         db/migrate/timestamp_create_spina_reviews_table.rb
+    9  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/reviews.rb:
+    1: require "reviews/engine"
+    2  
+    3: module Reviews
+    4  end
+    5  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/spina/reviews.rb:
+    1  module Spina
+    2:   module Reviews
+    3:     require 'spina/reviews/configuration'
+    4:     require 'spina/reviews/engine'
+    5    end
+    6  end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/spina/reviews/configuration.rb:
+    1  module Spina
+    2:   module Reviews
+    3      include ActiveSupport::Configurable
+    4  
+    .
+    6  
+    7      self.title = 'Beoordelingen'
+    8:     self.controller = 'reviews'
+    9      self.description = 'Beheer de beoordelingen van je klanten'
+   10      self.spina_icon = 'pencil-outline'
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/spina/reviews/engine.rb:
+    1  module Spina
+    2:   module Reviews
+    3      class Engine < ::Rails::Engine
+    4        isolate_namespace Spina
+    .
+   13        initializer "register plugin" do
+   14          plugin = ::Spina::Plugin.new
+   15:         plugin.name = "Reviews"
+   16:         plugin.config = Reviews.config
+   17          ::Spina.register_plugin(plugin)
+   18        end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/spina/reviews/version.rb:
+    1  module Spina
+    2:   module Reviews
+    3      VERSION = "0.0.3"
+    4    end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/lib/tasks/reviews_tasks.rake:
+    1  # desc "Explaining what the task does"
+    2: # task :reviews do
+    3  #   # Task goes here
+    4  # end
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/Rakefile:
+    9  RDoc::Task.new(:rdoc) do |rdoc|
+   10    rdoc.rdoc_dir = 'rdoc'
+   11:   rdoc.title    = 'Reviews'
+   12    rdoc.options << '--line-numbers'
+   13    rdoc.rdoc_files.include('README.rdoc')
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/README.md:
+   10  
+   11  ```
+   12: gem 'spina-review', path: '/path/to/the/project'
+   13  ```
+   14  
+   ..
+   16  
+   17  ```
+   18: rails g spina_reviews:install
+   19  ```
+   20  
+   21: This should copy the migration file required to create the Spina::Review model.
+   22  
+   23: In your Spina project, make sure your selected theme has 'reviews' added to plugins
+   24  
+   25  ```
+   26: self.plugins = ['reviews']
+   27  ```
+   28  
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/reviews.gemspec:
+    2  
+    3  # Maintain your gem's version:
+    4: require "spina/reviews/version"
+    5  
+    6  # Describe your gem and declare its dependencies:
+    7  Gem::Specification.new do |s|
+    8:   s.name        = "spina-reviews"
+    9:   s.version     = Spina::Reviews::VERSION
+   10    s.authors     = ["Bram Jetten"]
+   11    s.email       = ["bram@denkgroot.com"]
+   12    s.homepage    = "http://www.denkgroot.com"
+   13:   s.summary     = "Review system for Spina"
+   14:   s.description = "Plugin for Spina CMS to include reviews on your website"
+   15  
+   16    s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/test/dummy/config/application.rb:
+    4  
+    5  Bundler.require(*Rails.groups)
+    6: require "reviews"
+    7  
+    8  module Dummy
+
+/Users/hanpanpan/Documents/project/cms/spina-conponents/test/reviews_test.rb:
+    1  require 'test_helper'
+    2  
+    3: class ReviewsTest < ActiveSupport::TestCase
+    4    test "truth" do
+    5:     assert_kind_of Module, Reviews
+    6    end
+    7  end
+
+99 matches across 23 files

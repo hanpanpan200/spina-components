@@ -1,4 +1,4 @@
 # desc "Explaining what the task does"
-# task :reviews do
+# task :components do
 #   # Task goes here
 # end

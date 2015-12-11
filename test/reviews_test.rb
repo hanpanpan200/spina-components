@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class ReviewsTest < ActiveSupport::TestCase
+class ComponentsTest < ActiveSupport::TestCase
   test "truth" do
-    assert_kind_of Module, Reviews
+    assert_kind_of Module, Components
   end
 end

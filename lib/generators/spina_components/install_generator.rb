@@ -2,7 +2,7 @@ require 'rails/generators/base'
 require 'rails/generators/migration'
 require 'rails/generators/active_record'
 
-module SpinaReviews
+module SpinaComponents
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
@@ -16,7 +16,7 @@ module SpinaReviews
       end
 
       def copy_migration_file
-        migration_template "create_spina_reviews_table.rb", Rails.root.join("db/migrate/create_spina_reviews_table.rb")
+        migration_template "create_spina_components_table.rb", Rails.root.join("db/migrate/create_spina_components_table.rb")
       end
 
     end

@@ -3,25 +3,14 @@ module Spina
 
     private
 
-    def reviews
-      Review.order('created_at DESC')
+    def components
+      component.order('created_at DESC')
     end
-    helper_method :reviews
+    helper_method :components
 
-    def reviews_page_path
-      Page.where(view_template: 'reviews').first.try(:materialized_path)
+    def components_page_path
+      Page.where(view_template: 'components').first.try(:materialized_path)
     end
-    helper_method :reviews_page_path
-
-    def average_rating
-      Review.average('rating') || 0
-    end
-    helper_method :average_rating
-
-    def rating_count
-      Review.count
-    end
-    helper_method :rating_count
-
+    helper_method :components_page_path
   end
 end

@@ -1,0 +1,8 @@
+Description:
+    Generates the migration file required to create the component model
+
+Example:
+    rails generate spina_components:install
+
+    This will create:
+        db/migrate/timestamp_create_spina_components_table.rb

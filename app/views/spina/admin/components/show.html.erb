@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @component.name %>
+</p>
+
+<p>
+  <strong>Param data:</strong>
+  <%= @component.param_data %>
+</p>
+
+<p>
+  <strong>Use for:</strong>
+  <%= @component.use_for %>
+</p>
+
+<%= link_to 'Edit', edit_admin_component_path(@component) %> |
+<%= link_to 'Back', admin_components_path %>
